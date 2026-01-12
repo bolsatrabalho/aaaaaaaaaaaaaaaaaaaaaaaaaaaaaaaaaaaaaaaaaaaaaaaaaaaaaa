@@ -1,0 +1,71 @@
+<script>
+  function adicionarBolsista() {
+    const tbody = document.querySelector("#tabela tbody");
+
+    if (!tbody) {
+      alert("Erro: corpo da tabela não encontrado.");
+      return;
+    }
+
+    const tr = document.createElement("tr");
+
+    // ajuste a quantidade de colunas se precisar
+    const colunas = 20;
+
+    for (let i = 0; i < colunas; i++) {
+      const td = document.createElement("td");
+
+      if (i === colunas - 1) {
+        const input = document.createElement("input");
+        input.type = "file";
+        td.appendChild(input);
+      } else {
+        const input = document.createElement("input");
+        input.type = "text";
+        td.appendChild(input);
+      }
+
+      tr.appendChild(td);
+    }
+
+    tbody.appendChild(tr);
+  }
+
+  function salvarTabela() {
+    const linhas = document.querySelectorAll("#tabela tbody tr");
+
+    if (linhas.length === 0) {
+      alert("Não há dados para salvar.");
+      return;
+    }
+
+    const dados = [];
+
+    linhas.forEach(tr => {
+      const linha = [];
+      const inputs = tr.querySelectorAll("input");
+
+      inputs.forEach(input => {
+        if (input.type === "file") {
+          linha.push(input.files[0] ? input.files[0].name : "");
+        } else {
+          linha.push(input.value || "");
+        }
+      });
+
+      dados.push(linha);
+    });
+
+    google.script.run
+      .withSuccessHandler(() => alert("Dados salvos com sucesso!"))
+      .withFailureHandler(err => alert("Erro ao salvar: " + err.message))
+      .salvarDados(dados);
+  }
+
+  function enviarPlanilha() {
+    google.script.run
+      .withSuccessHandler(() => alert("Planilha enviada com sucesso!"))
+      .withFailureHandler(err => alert("Erro ao enviar: " + err.message))
+      .enviarPlanilha();
+  }
+</script>
